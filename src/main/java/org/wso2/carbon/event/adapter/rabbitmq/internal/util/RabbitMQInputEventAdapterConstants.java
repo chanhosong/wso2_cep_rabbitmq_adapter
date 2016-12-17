@@ -20,22 +20,22 @@ package org.wso2.carbon.event.adapter.rabbitmq.internal.util;
 /**
  * This class represents RabbitMQ specific Constants.
  */
-public final class RabbitMQInputEventAdapterConstants {
+public final class RabbitMQEventAdapterConstants {
 
-    private RabbitMQInputEventAdapterConstants() {
+    private RabbitMQEventAdapterConstants() {
     }
 
     public static final String ADAPTER_TYPE_RABBITMQ = "rabbitmq";
-    public static final String RABBITMQ_SERVER_HOST_NAME = "hostname";
-    public static final String RABBITMQ_SERVER_HOST_NAME_HINT = "hostname.hint";
-    public static final String RABBITMQ_SERVER_PORT = "port";
-    public static final String RABBITMQ_SERVER_PORT_HINT = "port.hint";
-    public static final String RABBITMQ_SERVER_USERNAME = "userName";
-    public static final String RABBITMQ_SERVER_USERNAME_HINT = "userName.hint";
-    public static final String RABBITMQ_SERVER_PASSWORD = "password";
-    public static final String RABBITMQ_SERVER_PASSWORD_HINT = "password.hint";
-    public static final String RABBITMQ_QUEUE_NAME = "queue.Name";
-    public static final String RABBITMQ_QUEUE_NAME_HINT = "queue.Name.hint";
+    public static final String RABBITMQ_SERVER_HOST_NAME = "transport.rabbitmq.HostName";
+    public static final String RABBITMQ_SERVER_HOST_NAME_HINT = "transport.rabbitmq.HostName.hint";
+    public static final String RABBITMQ_SERVER_PORT = "transport.rabbitmq.Port";
+    public static final String RABBITMQ_SERVER_PORT_HINT = "transport.rabbitmq.Port.hint";
+    public static final String RABBITMQ_SERVER_USERNAME = "transport.rabbitmq.UserName";
+    public static final String RABBITMQ_SERVER_USERNAME_HINT = "transport.rabbitmq.UserName.hint";
+    public static final String RABBITMQ_SERVER_PASSWORD = "transport.rabbitmq.Password";
+    public static final String RABBITMQ_SERVER_PASSWORD_HINT = "transport.rabbitmq.Password.hint";
+    public static final String RABBITMQ_QUEUE_NAME = "transport.rabbitmq.Queue";
+    public static final String RABBITMQ_QUEUE_NAME_HINT = "transport.rabbitmq.Queue.hint";
     public static final String RABBITMQ_EXCHANGE_NAME = "exchange.Name";
     public static final String RABBITMQ_EXCHANGE_NAME_HINT = "exchange.Name.hint";
     public static final String RABBITMQ_QUEUE_DURABLE = "queue.Durable";
@@ -58,8 +58,8 @@ public final class RabbitMQInputEventAdapterConstants {
     public static final String RABBITMQ_CONNECTION_RETRY_COUNT_HINT = "connection.RetryCount.hint";
     public static final String RABBITMQ_CONNECTION_RETRY_INTERVAL = "connection.RetryInterval";
     public static final String RABBITMQ_CONNECTION_RETRY_INTERVAL_HINT = "connection.RetryInterval.hint";
-    public static final String RABBITMQ_SERVER_VIRTUAL_HOST = "server.VirtualHost";
-    public static final String RABBITMQ_SERVER_VIRTUAL_HOST_HINT = "server.VirtualHost.hint";
+    public static final String RABBITMQ_SERVER_VIRTUAL_HOST = "transport.rabbitmq.VirtualHost";
+    public static final String RABBITMQ_SERVER_VIRTUAL_HOST_HINT = "transport.rabbitmq.VirtualHost.hint";
     public static final String RABBITMQ_FACTORY_HEARTBEAT = "factory.Heartbeat";
     public static final String RABBITMQ_FACTORY_HEARTBEAT_HINT = "factory.Heartbeat.hint";
     public static final String RABBITMQ_CONNECTION_SSL_ENABLED = "connection.sslEnabled";

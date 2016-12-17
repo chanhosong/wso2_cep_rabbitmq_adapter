@@ -23,11 +23,9 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.event.adapter.rabbitmq.output.RabbitMQOutputEventAdapterFactory;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterFactory;
 
-
 /**
- * @scr.component component.name="output.Mqtt.AdapterService.component" immediate="true"
+ * @scr.component component.name="output.rabbitMQEventAdapterService.component" immediate="true"
  */
-//@Component(name="output.RabbitMQEventAdaptorService.component", immediate=true)
 public class RabbitMQOutputEventAdapterServiceDS {
 
     private static final Log log = LogFactory.getLog(RabbitMQOutputEventAdapterServiceDS.class);
@@ -37,7 +35,6 @@ public class RabbitMQOutputEventAdapterServiceDS {
      *
      * @param context bundle context where service is registered
      */
-//    @Activate
     protected void activate(ComponentContext context) {
 
         try {
@@ -48,5 +45,4 @@ public class RabbitMQOutputEventAdapterServiceDS {
             log.error("Can not create the input RabbitMQ adapter service ", e);
         }
     }
-
 }

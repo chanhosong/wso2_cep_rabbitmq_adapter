@@ -22,7 +22,7 @@ import org.wso2.carbon.event.input.adapter.core.InputEventAdapterConfiguration;
 /**
  * Getting the connection values from the adapter configuration.
  */
-public class RabbitMQInputEventAdapterConnectionConfiguration {
+public class RabbitMQBrokerConnectionConfiguration {
 
     private String username = null;
     private String password = null;
@@ -106,19 +106,19 @@ public class RabbitMQInputEventAdapterConnectionConfiguration {
         this.autoDelete = autoDelete;
     }
 
-    public RabbitMQInputEventAdapterConnectionConfiguration(InputEventAdapterConfiguration eventAdapterConfiguration) {
+    public RabbitMQBrokerConnectionConfiguration(InputEventAdapterConfiguration eventAdapterConfiguration) {
 
-        this.username = eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_SERVER_USERNAME);
-        this.port = eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_SERVER_PORT);
-        this.password = eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_SERVER_PASSWORD);
-        this.hostName = eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_SERVER_HOST_NAME);
-        this.exclusive = eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_QUEUE_EXCLUSIVE);
-        this.durable = eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_QUEUE_DURABLE);
-        this.autoDelete = eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_QUEUE_AUTO_DELETE);
-        this.exchangeDurable = eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_EXCHANGE_DURABLE);
+        this.username = eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_SERVER_USERNAME);
+        this.port = eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_SERVER_PORT);
+        this.password = eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_SERVER_PASSWORD);
+        this.hostName = eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_SERVER_HOST_NAME);
+        this.exclusive = eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_QUEUE_EXCLUSIVE);
+        this.durable = eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_QUEUE_DURABLE);
+        this.autoDelete = eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_QUEUE_AUTO_DELETE);
+        this.exchangeDurable = eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_EXCHANGE_DURABLE);
 
-        if (eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_QUEUE_AUTO_ACK) != null) {
-            this.autoAck = Boolean.parseBoolean(eventAdapterConfiguration.getProperties().get(RabbitMQInputEventAdapterConstants.RABBITMQ_QUEUE_AUTO_ACK));
+        if (eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_QUEUE_AUTO_ACK) != null) {
+            this.autoAck = Boolean.parseBoolean(eventAdapterConfiguration.getProperties().get(RabbitMQEventAdapterConstants.RABBITMQ_QUEUE_AUTO_ACK));
         }
     }
 }
