@@ -1,27 +1,8 @@
-/*
-*  Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
-*
-*  WSO2 Inc. licenses this file to you under the Apache License,
-*  Version 2.0 (the "License"); you may not use this file except
-*  in compliance with the License.
-*  You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing,
-* software distributed under the License is distributed on an
-* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-* KIND, either express or implied.  See the License for the
-* specific language governing permissions and limitations
-* under the License.
-*/
-package org.wso2.carbon.event.adapter.rabbitmq.output;
+package org.wso2.carbon.event.adapter.rabbitmq;
 
-import com.rabbitmq.client.Channel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.event.adapter.rabbitmq.internal.exception.RabbitAdapterMQException;
 import org.wso2.carbon.event.adapter.rabbitmq.internal.util.RabbitMQOutputEventAdapterConnectionConfiguration;
 import org.wso2.carbon.event.adapter.rabbitmq.internal.util.RabbitMQOutputEventAdapterConstants;
 import org.wso2.carbon.event.adapter.rabbitmq.internal.util.RabbitMQOutputEventAdapterPublisher;
@@ -31,7 +12,6 @@ import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -45,9 +25,9 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
 
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
     private Map<String, String> globalProperties;
-    private RabbitMQOutputEventAdapterPublisher mqttAdapterPublisher;
+    private RabbitMQOutputEventAdapterPublisher rabbitmqAdapterPublisher;
     private static ThreadPoolExecutor threadPoolExecutor;
-    private static final Log log = LogFactory.getLog(RabbitMQOutputEventAdapter.class);
+    private static final Log LOGGER = LogFactory.getLog(RabbitMQOutputEventAdapter.class);
     private int tenantId;
 
     public RabbitMQOutputEventAdapter(OutputEventAdapterConfiguration eventAdapterConfiguration, Map<String, String> globalProperties) {
@@ -64,7 +44,8 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
     @Override
     public void init() throws OutputEventAdapterException {
 
-        tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        LOGGER.debug("*** DEBUG RabbitMQOutputEventAdapter().init() start.");
+        LOGGER.info("이닛 실행했다");
 
         //ThreadPoolExecutor will be assigned  if it is null
         if (threadPoolExecutor == null) {
@@ -72,6 +53,13 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
             int maxThread;
             int jobQueSize;
             long defaultKeepAliveTime;
+
+            if (globalProperties.get(RabbitMQOutputEventAdapterConstants.RABBITMQ_TENANT_NAME) != null) {
+                PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(Integer.parseInt(globalProperties.get(RabbitMQOutputEventAdapterConstants.RABBITMQ_TENANT_NAME)));
+                tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+            } else {
+                tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+            }
 
             //If global properties are available those will be assigned else constant values will be assigned
             if (globalProperties.get(RabbitMQOutputEventAdapterConstants.ADAPTER_MIN_THREAD_POOL_SIZE_NAME) != null) {
@@ -100,8 +88,11 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
                 jobQueSize = RabbitMQOutputEventAdapterConstants.DEFAULT_EXECUTOR_JOB_QUEUE_SIZE;
             }
 
-            threadPoolExecutor = new ThreadPoolExecutor(minThread, maxThread, defaultKeepAliveTime,
-                    TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(jobQueSize));
+            if(LOGGER.isDebugEnabled()) {
+                LOGGER.debug("*** DEBUG ThreadPoolExecutor Init MinThread: " + minThread + ", MaxThread: " + maxThread);
+            }
+
+            threadPoolExecutor = new ThreadPoolExecutor(minThread, maxThread, defaultKeepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(jobQueSize));
         }
     }
 
@@ -112,27 +103,20 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
      */
     @Override
     public void testConnect() throws TestConnectionNotSupportedException {
-//        throw new TestConnectionNotSupportedException("Test connection is not available");
-        tenantId = Integer.parseInt(eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_TENANT_NAME));
-        RabbitMQOutputEventAdapterConnectionConfiguration rabbitMQOutputEventAdapterConnectionConfiguration
-                = new RabbitMQOutputEventAdapterConnectionConfiguration(
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_HOST_NAME),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_VIRTUAL_HOST),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_PORT),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_USERNAME),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_PASSWORD),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_QUEUE_NAME)
-        );
-
-        RabbitMQOutputEventAdapterPublisher rabbitMQOutputEventAdapterPublisher = new RabbitMQOutputEventAdapterPublisher(rabbitMQOutputEventAdapterConnectionConfiguration, tenantId);
-
-        Channel channel = rabbitMQOutputEventAdapterPublisher.getChannel();
-
-        try {
-            channel.basicQos(1);
-        } catch (IOException e) {
-            throw new RabbitAdapterMQException(e);
-        }
+        throw new TestConnectionNotSupportedException("Test connection is not available");
+//        tenantId = Integer.parseInt(eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_TENANT_NAME));
+//        RabbitMQOutputEventAdapterConnectionConfiguration rabbitMQOutputEventAdapterConnectionConfiguration
+//                = new RabbitMQOutputEventAdapterConnectionConfiguration(eventAdapterConfiguration);
+//
+//        RabbitMQOutputEventAdapterPublisher rabbitMQOutputEventAdapterPublisher = new RabbitMQOutputEventAdapterPublisher(rabbitMQOutputEventAdapterConnectionConfiguration, eventAdapterConfiguration, tenantId);
+//
+//        Channel channel = rabbitMQOutputEventAdapterPublisher.getChannel();
+//
+//        try {
+//            channel.basicQos(1);
+//        } catch (IOException e) {
+//            throw new RabbitMQException(e);
+//        }
     }
 
     /**
@@ -141,18 +125,13 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
      */
     @Override
     public void connect() {
-        tenantId = Integer.parseInt(eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_TENANT_NAME));
-        RabbitMQOutputEventAdapterConnectionConfiguration rabbitMQOutputEventAdapterConnectionConfiguration
-                = new RabbitMQOutputEventAdapterConnectionConfiguration(
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_HOST_NAME),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_VIRTUAL_HOST),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_PORT),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_USERNAME),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_PASSWORD),
-                eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_QUEUE_NAME)
-        );
 
-        mqttAdapterPublisher = new RabbitMQOutputEventAdapterPublisher(rabbitMQOutputEventAdapterConnectionConfiguration, tenantId);
+        LOGGER.debug("*** DEBUG RabbitMQOutputEventAdapter().connect() trying to connect.");
+
+        RabbitMQOutputEventAdapterConnectionConfiguration configuration = new RabbitMQOutputEventAdapterConnectionConfiguration(eventAdapterConfiguration);
+
+        rabbitmqAdapterPublisher = new RabbitMQOutputEventAdapterPublisher(configuration, eventAdapterConfiguration);
+        LOGGER.info("커넥트함수 실행했다");
     }
 
     /**
@@ -165,11 +144,12 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
     public void publish(Object message, Map<String, String> dynamicProperties) {
 
         String exchange = dynamicProperties.get(RabbitMQOutputEventAdapterConstants.RABBITMQ_EXCHANGE_NAME);//default = "exchange_dlm"
+        LOGGER.info("퍼블리쉬 실행했다");
 
         try {
             threadPoolExecutor.submit(new RabbitMQSender(exchange, message));
         } catch (RejectedExecutionException e) {
-            EventAdapterUtil.logAndDrop(eventAdapterConfiguration.getName(), message, "Job queue is full", e, log, tenantId);
+            EventAdapterUtil.logAndDrop(eventAdapterConfiguration.getName(), message, "Job queue is full", e, LOGGER, tenantId);
         }
     }
 
@@ -179,15 +159,15 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
     @Override
     public void disconnect() {
 
-        int tenantID = Integer.parseInt(eventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_TENANT_NAME));
+        LOGGER.info("디스커넥트 실행했다");
 
         try {
-            if (mqttAdapterPublisher != null) {
-                mqttAdapterPublisher.close(tenantID);
-                mqttAdapterPublisher = null;
+            if (rabbitmqAdapterPublisher != null) {
+                rabbitmqAdapterPublisher.close();
+                rabbitmqAdapterPublisher = null;
             }
         } catch (OutputEventAdapterException e) {
-            log.error("Exception when closing the mqtt publisher connection on Output MQTT Adapter '" + eventAdapterConfiguration.getName() + "'", e);
+            LOGGER.error("Exception when closing the Rabbitmq publisher connection on Output Event Adapter '" + eventAdapterConfiguration.getName() + "'", e);
         }
     }
 
@@ -209,6 +189,11 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
         return false;
     }
 
+    /**
+     * Create to Rabbitmq Sender.
+     *
+     * @return
+     */
     class RabbitMQSender implements Runnable {
 
         String exchange;
@@ -217,19 +202,20 @@ public class RabbitMQOutputEventAdapter implements OutputEventAdapter {
         RabbitMQSender(String exchange, Object message) {
             this.exchange = exchange;
             this.message = message;
+            LOGGER.info("래빗엠큐센더 실행했다");
         }
 
         @Override
         public void run() {
             try {
+                LOGGER.info("래빗엠큐센더의 런을 실행했다");
 //                if (qos == null) {
-                    mqttAdapterPublisher.publish(message.toString(), exchange);
+                    rabbitmqAdapterPublisher.publish(message.toString());
 //                } else {
-//                    mqttAdapterPublisher.publish(Integer.parseInt(qos), message.toString(), topic);
+//                    rabbitmqAdapterPublisher.publish(Integer.parseInt(qos), message.toString(), topic);
 //                }
             } catch (Throwable t) {
-                EventAdapterUtil.logAndDrop(eventAdapterConfiguration.getName(), message, null, t, log, tenantId);
-
+                EventAdapterUtil.logAndDrop(eventAdapterConfiguration.getName(), message, null, t, LOGGER, tenantId);
             }
         }
     }

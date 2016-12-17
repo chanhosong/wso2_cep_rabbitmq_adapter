@@ -20,9 +20,9 @@ package org.wso2.carbon.event.adapter.rabbitmq.internal.util;
 /**
  * This class represents RabbitMQ specific Constants.
  */
-public final class RabbitMQEventAdapterConstants {
+public final class RabbitMQInputEventAdapterConstants {
 
-    private RabbitMQEventAdapterConstants() {
+    private RabbitMQInputEventAdapterConstants() {
     }
 
     public static final String ADAPTER_TYPE_RABBITMQ = "rabbitmq";

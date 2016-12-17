@@ -16,7 +16,7 @@
 * under the License.
 */
 
-package rabbitmq.internal.util;
+package org.wso2.carbon.event.adapter.rabbitmq.internal.util;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -25,6 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 /**
  * This class represents making connection by specifying queue and exchange to RabbtMQ broker.
@@ -39,7 +41,7 @@ public class RabbitMQUtils {
      * @param factory Object of connection Factory class.
      * @throws IOException
      */
-    public static Connection createConnection(ConnectionFactory factory) throws IOException {
+    public static Connection createConnection(ConnectionFactory factory) throws IOException, TimeoutException {
         return factory.newConnection();
     }
 
@@ -91,6 +93,24 @@ public class RabbitMQUtils {
     }
 
     /**
+     * Check Whether Queue is available
+     *
+     * @param channel Channel to the RabbitMQ for event publisher
+     * @param queueName  Name of the queue
+     */
+    public static boolean isQueueAvailable(Channel channel, String queueName) throws IOException {
+        try {
+            // check availability of the named queue
+            // if an error is encountered, including if the queue does not exist and if the
+            // queue is exclusively owned by another connection
+            channel.queueDeclarePassive(queueName);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
      * @param connection   Connection to the RabbitMQ
      * @param queueName    Name of the queue
      * @param isDurable    Whether durable or not
@@ -121,13 +141,42 @@ public class RabbitMQUtils {
     }
 
     /**
+     * @param connection   Connection to the RabbitMQ for event publisher
+     * @param queueName    Name of the queue
+     * @param isDurable    Whether durable or not
+     * @param isExclusive  Whether exclusive or not
+     * @param isAutoDelete Whether queue is auto delete or not
+     * @throws IOException
+     */
+    public static void declareQueue(Connection connection, Channel channel, String queueName, String isDurable,
+                                    String isExclusive, String isAutoDelete, Map<String, Object> configuration) throws IOException {
+
+        boolean queueAvailable = isQueueAvailable(channel, queueName);
+        if (!queueAvailable) {
+            if (log.isDebugEnabled()) {
+                log.debug("Queue :" + queueName + " not found or already declared exclusive. Declaring the queue.");
+            }
+            // Declare the named queue if it does not exists.
+            if (!channel.isOpen()) {
+                channel = connection.createChannel();
+                log.debug("Channel is not open. Creating a new channel.");
+            }
+            try {
+                channel.queueDeclare(queueName, isDurableQueue(isDurable), isExclusiveQueue(isExclusive), isAutoDeleteQueue(isAutoDelete), configuration);
+            } catch (IOException e) {
+                handleException("Error while creating queue: " + queueName, e);
+            }
+        }
+    }
+
+    /**
      * @param connection      Connection to the RabbitMQ
      * @param exchangeName    Name of the exchange
      * @param exchangeType    Type of Exchange
      * @param exchangeDurable Whether durable or not
      * @throws IOException
      */
-    public static void declareExchange(Connection connection, String exchangeName, String exchangeType, String exchangeDurable) throws IOException {
+    public static void declareExchange(Connection connection, String exchangeName, String exchangeType, String exchangeDurable) throws IOException, TimeoutException {
         Boolean exchangeAvailable = false;
         Channel channel = connection.createChannel();
         try {
@@ -148,21 +197,59 @@ public class RabbitMQUtils {
                 if (exchangeType != null
                         && !exchangeType.equals("")) {
                     if (exchangeDurable != null && !exchangeDurable.equals("")) {
-                        channel.exchangeDeclare(exchangeName,
-                                exchangeType,
-                                Boolean.parseBoolean(exchangeDurable));
+                        channel.exchangeDeclare(exchangeName, exchangeType, Boolean.parseBoolean(exchangeDurable));
                     } else {
-                        channel.exchangeDeclare(exchangeName,
-                                exchangeType, true);
+                        channel.exchangeDeclare(exchangeName, exchangeType, true);
                     }
                 } else {
-                    channel.exchangeDeclare(exchangeName, RabbitMQEventAdapterConstants.DEFAULT_EXCHANGE_TYPE, true);
+                    channel.exchangeDeclare(exchangeName, RabbitMQInputEventAdapterConstants.DEFAULT_EXCHANGE_TYPE, true);
                 }
             } catch (IOException e) {
                 handleException("Error occurred while declaring exchange.", e);
             }
         }
         channel.close();
+    }
+
+    /**
+     * @param connection      Connection to the RabbitMQ for event publisher
+     * @param exchangeName    Name of the exchange
+     * @param exchangeType    Type of Exchange
+     * @param exchangeDurable Whether durable or not
+     * @throws IOException
+     */
+    public static void declareExchange(Connection connection, Channel channel, String exchangeName, String exchangeType, String exchangeDurable) throws IOException, TimeoutException {
+        Boolean exchangeAvailable = false;
+        try {
+            // check availability of the named exchange.
+            // The server will raise an IOException if the named exchange already exists.
+            channel.exchangeDeclarePassive(exchangeName);
+            exchangeAvailable = true;
+        } catch (IOException e) {
+            log.info("Exchange :" + exchangeName + " not found.Declaring exchange.");
+        }
+        if (!exchangeAvailable) {
+            // Declare the named exchange if it does not exists.
+            if (!channel.isOpen()) {
+                channel = connection.createChannel();
+                log.debug("Channel is not open. Creating a new channel.");
+            }
+            try {
+                if (exchangeType != null
+                        && !exchangeType.equals("")) {
+                    if (exchangeDurable != null && !exchangeDurable.equals("")) {
+                        channel.exchangeDeclare(exchangeName, exchangeType, Boolean.parseBoolean(exchangeDurable));
+                    } else {
+                        channel.exchangeDeclare(exchangeName, exchangeType, true);
+                    }
+                } else {
+                    channel.exchangeDeclare(exchangeName, RabbitMQInputEventAdapterConstants.DEFAULT_EXCHANGE_TYPE, true);
+                }
+            } catch (IOException e) {
+                handleException("Error occurred while declaring exchange.", e);
+            }
+        }
+//        channel.close();
     }
 
     /**

@@ -20,12 +20,13 @@ package org.wso2.carbon.event.adapter.rabbitmq.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.adapter.rabbitmq.output.RabbitMQOutputEventAdapterFactory;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.wso2.carbon.event.adapter.rabbitmq.RabbitMQOutputEventAdapterFactory;
 import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterFactory;
 
-/**
- * @scr.component component.name="output.rabbitMQEventAdapterService.component" immediate="true"
- */
+//@scr.component component.name="output.rabbitMQEventAdapterService.component" immediate="true"
+@Component(name="output.RabbitMQEventAdapterService.component", immediate=true)
 public class RabbitMQOutputEventAdapterServiceDS {
 
     private static final Log log = LogFactory.getLog(RabbitMQOutputEventAdapterServiceDS.class);
@@ -35,6 +36,7 @@ public class RabbitMQOutputEventAdapterServiceDS {
      *
      * @param context bundle context where service is registered
      */
+    @Activate
     protected void activate(ComponentContext context) {
 
         try {

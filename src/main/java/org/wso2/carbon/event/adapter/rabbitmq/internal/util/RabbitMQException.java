@@ -16,7 +16,7 @@
 * under the License.
 */
 
-package rabbitmq.internal.util;
+package org.wso2.carbon.event.adapter.rabbitmq.internal.util;
 
 /**
  * This class represents RabbitMQ specific exceptions

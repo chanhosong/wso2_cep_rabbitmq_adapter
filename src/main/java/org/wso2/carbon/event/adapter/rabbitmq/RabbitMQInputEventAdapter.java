@@ -16,8 +16,8 @@
 
 package org.wso2.carbon.event.adapter.rabbitmq;
 
-import org.wso2.carbon.event.adapter.rabbitmq.internal.util.RabbitMQAdapterListener;
-import org.wso2.carbon.event.adapter.rabbitmq.internal.util.RabbitMQBrokerConnectionConfiguration;
+import org.wso2.carbon.event.adapter.rabbitmq.internal.util.RabbitMQInputEventAdapterListener;
+import org.wso2.carbon.event.adapter.rabbitmq.internal.util.RabbitMQInputEventAdapterConnectionConfiguration;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapter;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterConfiguration;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterListener;
@@ -27,15 +27,15 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Input RabbitMQEventAdapter will be used to receive events with AMQP protocol using specified broker and queue.
+ * Input RabbitMQInputEventAdapter will be used to receive events with AMQP protocol using specified broker and queue.
  */
-public class RabbitMQEventAdapter implements InputEventAdapter {
+public class RabbitMQInputEventAdapter implements InputEventAdapter {
 
     private final InputEventAdapterConfiguration eventAdapterConfiguration;
     private final String id = UUID.randomUUID().toString();
-    private RabbitMQAdapterListener rabbitmqAdapterListener;
-    public RabbitMQEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
-                                Map<String, String> globalProperties) {
+    private RabbitMQInputEventAdapterListener rabbitmqInputEventAdapterListener;
+    public RabbitMQInputEventAdapter(InputEventAdapterConfiguration eventAdapterConfiguration,
+                                     Map<String, String> globalProperties) {
         this.eventAdapterConfiguration = eventAdapterConfiguration;
     }
 
@@ -47,9 +47,9 @@ public class RabbitMQEventAdapter implements InputEventAdapter {
      */
     @Override
     public void init(InputEventAdapterListener eventAdapterListener) {
-        RabbitMQBrokerConnectionConfiguration rabbitmqBrokerConnectionConfiguration;
-        rabbitmqBrokerConnectionConfiguration = new RabbitMQBrokerConnectionConfiguration(eventAdapterConfiguration);
-        rabbitmqAdapterListener = new RabbitMQAdapterListener(rabbitmqBrokerConnectionConfiguration, eventAdapterConfiguration, eventAdapterListener);
+        RabbitMQInputEventAdapterConnectionConfiguration rabbitmqInputEventAdapterConnectionConfiguration;
+        rabbitmqInputEventAdapterConnectionConfiguration = new RabbitMQInputEventAdapterConnectionConfiguration(eventAdapterConfiguration);
+        rabbitmqInputEventAdapterListener = new RabbitMQInputEventAdapterListener(rabbitmqInputEventAdapterConnectionConfiguration, eventAdapterConfiguration, eventAdapterListener);
     }
 
     /**
@@ -69,7 +69,7 @@ public class RabbitMQEventAdapter implements InputEventAdapter {
      */
     @Override
     public void connect() {
-        rabbitmqAdapterListener.createConnection();
+        rabbitmqInputEventAdapterListener.createConnection();
     }
 
     /**
@@ -77,8 +77,8 @@ public class RabbitMQEventAdapter implements InputEventAdapter {
      */
     @Override
     public void disconnect() {
-        if (rabbitmqAdapterListener != null) {
-            rabbitmqAdapterListener.stopListener(eventAdapterConfiguration.getName());
+        if (rabbitmqInputEventAdapterListener != null) {
+            rabbitmqInputEventAdapterListener.stopListener(eventAdapterConfiguration.getName());
         }
     }
 
@@ -91,7 +91,7 @@ public class RabbitMQEventAdapter implements InputEventAdapter {
     }
 
     /**
-     * This method is checking object is instance of RabbitMQEventAdapter and adapter id.
+     * This method is checking object is instance of RabbitMQInputEventAdapter and adapter id.
      *
      * @param object
      * @return Boolean value
@@ -99,8 +99,8 @@ public class RabbitMQEventAdapter implements InputEventAdapter {
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
-        if (!(object instanceof RabbitMQEventAdapter)) return false;
-        RabbitMQEventAdapter that = (RabbitMQEventAdapter) object;
+        if (!(object instanceof RabbitMQInputEventAdapter)) return false;
+        RabbitMQInputEventAdapter that = (RabbitMQInputEventAdapter) object;
         return id.equals(that.id);
     }
 

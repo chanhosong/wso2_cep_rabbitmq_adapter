@@ -24,16 +24,16 @@ public final class RabbitMQOutputEventAdapterConstants {
     }
 
     public static final String ADAPTER_TYPE_RABBITMQ = "rabbitmq";
-    public static final String RABBITMQ_SERVER_HOST_NAME = "hostname";
-    public static final String RABBITMQ_SERVER_HOST_NAME_HINT = "hostname.hint";
-    public static final String RABBITMQ_SERVER_PORT = "port";
-    public static final String RABBITMQ_SERVER_PORT_HINT = "port.hint";
-    public static final String RABBITMQ_SERVER_USERNAME = "userName";
-    public static final String RABBITMQ_SERVER_USERNAME_HINT = "userName.hint";
-    public static final String RABBITMQ_SERVER_PASSWORD = "password";
-    public static final String RABBITMQ_SERVER_PASSWORD_HINT = "password.hint";
-    public static final String RABBITMQ_QUEUE_NAME = "queue.Name";
-    public static final String RABBITMQ_QUEUE_NAME_HINT = "queue.Name.hint";
+    public static final String RABBITMQ_SERVER_HOST_NAME = "transport.rabbitmq.HostName";
+    public static final String RABBITMQ_SERVER_HOST_NAME_HINT = "transport.rabbitmq.HostName.hint";
+    public static final String RABBITMQ_SERVER_PORT = "transport.rabbitmq.Port";
+    public static final String RABBITMQ_SERVER_PORT_HINT = "transport.rabbitmq.Port.hint";
+    public static final String RABBITMQ_SERVER_USERNAME = "transport.rabbitmq.UserName";
+    public static final String RABBITMQ_SERVER_USERNAME_HINT = "transport.rabbitmq.UserName.hint";
+    public static final String RABBITMQ_SERVER_PASSWORD = "transport.rabbitmq.Password";
+    public static final String RABBITMQ_SERVER_PASSWORD_HINT = "transport.rabbitmq.Password.hint";
+    public static final String RABBITMQ_QUEUE_NAME = "transport.rabbitmq.Queue";
+    public static final String RABBITMQ_QUEUE_NAME_HINT = "transport.rabbitmq.Queue.hint";
     public static final String RABBITMQ_EXCHANGE_NAME = "exchange.Name";
     public static final String RABBITMQ_EXCHANGE_NAME_HINT = "exchange.Name.hint";
     public static final String RABBITMQ_TENANT_NAME = "tenant.Name";
@@ -58,8 +58,8 @@ public final class RabbitMQOutputEventAdapterConstants {
     public static final String RABBITMQ_CONNECTION_RETRY_COUNT_HINT = "connection.RetryCount.hint";
     public static final String RABBITMQ_CONNECTION_RETRY_INTERVAL = "connection.RetryInterval";
     public static final String RABBITMQ_CONNECTION_RETRY_INTERVAL_HINT = "connection.RetryInterval.hint";
-    public static final String RABBITMQ_SERVER_VIRTUAL_HOST = "server.VirtualHost";
-    public static final String RABBITMQ_SERVER_VIRTUAL_HOST_HINT = "server.VirtualHost.hint";
+    public static final String RABBITMQ_SERVER_VIRTUAL_HOST = "transport.rabbitmq.VirtualHost";
+    public static final String RABBITMQ_SERVER_VIRTUAL_HOST_HINT = "transport.rabbitmq.VirtualHost.hint";
     public static final String RABBITMQ_FACTORY_HEARTBEAT = "factory.Heartbeat";
     public static final String RABBITMQ_FACTORY_HEARTBEAT_HINT = "factory.Heartbeat.hint";
     public static final String RABBITMQ_CONNECTION_SSL_ENABLED = "connection.sslEnabled";
@@ -71,7 +71,11 @@ public final class RabbitMQOutputEventAdapterConstants {
     public static final String RABBITMQ_CONNECTION_SSL_TRUSTSTORE_TYPE = "connection.ssl.truststore.Type";
     public static final String RABBITMQ_CONNECTION_SSL_TRUSTSTORE_PASSWORD = "connection.ssl.truststore.Password";
     public static final String RABBITMQ_CONNECTION_SSL_VERSION = "connection.ssl.Version";
+    public static final String CONSUMER_TAG = "consumer.tag";
+    public static final String CONSUMER_TAG_HINT = "consumer.tag.hint";
 
+    public static final int DEFAULT_RETRY_INTERVAL = 30000;
+    public static final int DEFAULT_RETRY_COUNT = 3;
     public static final int DEFAULT_MIN_THREAD_POOL_SIZE = 8;
     public static final int DEFAULT_MAX_THREAD_POOL_SIZE = 100;
     public static final int DEFAULT_EXECUTOR_JOB_QUEUE_SIZE = 2000;

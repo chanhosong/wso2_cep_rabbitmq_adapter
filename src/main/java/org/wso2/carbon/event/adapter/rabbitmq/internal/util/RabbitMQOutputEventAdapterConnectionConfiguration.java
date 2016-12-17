@@ -17,14 +17,19 @@
 */
 package org.wso2.carbon.event.adapter.rabbitmq.internal.util;
 
+import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration;
+
 public class RabbitMQOutputEventAdapterConnectionConfiguration {
 
-    private String hostName;
-    private String virtualHostName = null;
-    private String port;
     private String username = null;
     private String password = null;
-    private String queueName = null;
+    private String hostName;
+    private String port;
+    private String exchangeDurable;
+    private boolean autoAck;
+    private String durable;
+    private String exclusive;
+    private String autoDelete;
 
     public String getHostName() {
         return hostName;
@@ -32,12 +37,6 @@ public class RabbitMQOutputEventAdapterConnectionConfiguration {
 
     public void setHostName(String hostName) {
         this.hostName = hostName;
-    }
-
-    public String getVirtualHostName() { return virtualHostName; }
-
-    public void setVirtualHostName(String virtualHostName) {
-        this.virtualHostName = virtualHostName;
     }
 
     public String getPort() {
@@ -64,21 +63,59 @@ public class RabbitMQOutputEventAdapterConnectionConfiguration {
         this.username = username;
     }
 
-    public String getQueueName() {
-        return queueName;
+    public String getExchangeDurable() {
+        return exchangeDurable;
     }
 
-    public void setQueueName(String queueName) {
-        this.queueName = queueName;
+    public void setExchangeDurable(String exchangeDurable) {
+        this.exchangeDurable = exchangeDurable;
     }
 
-    public RabbitMQOutputEventAdapterConnectionConfiguration(String hostName, String virtualHostName,
-                                                             String port, String username, String password, String queueName) {
-        this.hostName = hostName;
-        this.virtualHostName = virtualHostName;
-        this.port = port;
-        this.username = username;
-        this.password = password;
-        this.queueName = queueName;
+    public boolean isAutoAck() {
+        return autoAck;
+    }
+
+    public void setAutoAck(boolean autoAck) {
+        this.autoAck = autoAck;
+    }
+
+    public String getDurable() {
+        return durable;
+    }
+
+    public void setDurable(String durable) {
+        this.durable = durable;
+    }
+
+    public String getExclusive() {
+        return exclusive;
+    }
+
+    public void setExclusive(String exclusive) {
+        this.exclusive = exclusive;
+    }
+
+    public String getAutoDelete() {
+        return autoDelete;
+    }
+
+    public void setAutoDelete(String autoDelete) {
+        this.autoDelete = autoDelete;
+    }
+
+    public RabbitMQOutputEventAdapterConnectionConfiguration(OutputEventAdapterConfiguration outputEventAdapterConfiguration) {
+
+        this.username = outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_USERNAME);
+        this.port = outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_PORT);
+        this.password = outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_PASSWORD);
+        this.hostName = outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_SERVER_HOST_NAME);
+        this.exclusive = outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_QUEUE_EXCLUSIVE);
+        this.durable = outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_QUEUE_DURABLE);
+        this.autoDelete = outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_QUEUE_AUTO_DELETE);
+        this.exchangeDurable = outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_EXCHANGE_DURABLE);
+
+        if (outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_QUEUE_AUTO_ACK) != null) {
+            this.autoAck = Boolean.parseBoolean(outputEventAdapterConfiguration.getStaticProperties().get(RabbitMQOutputEventAdapterConstants.RABBITMQ_QUEUE_AUTO_ACK));
+        }
     }
 }

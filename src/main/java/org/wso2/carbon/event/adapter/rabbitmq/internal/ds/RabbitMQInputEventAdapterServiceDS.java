@@ -21,25 +21,27 @@ package org.wso2.carbon.event.adapter.rabbitmq.internal.ds;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.wso2.carbon.event.adapter.rabbitmq.RabbitMQEventAdapterFactory;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.wso2.carbon.event.adapter.rabbitmq.RabbitMQInputEventAdapterFactory;
 import org.wso2.carbon.event.input.adapter.core.InputEventAdapterFactory;
 
-/**
- * @scr.component name="input.rabbitMQEventAdapterService.component" immediate="true"
- */
-public class RabbitMQEventAdapterServiceDS {
+//@scr.component name="input.rabbitMQEventAdapterService.component" immediate="true"
+@Component(name="input.RabbitMQEventAdapterService.component", immediate=true)
+public class RabbitMQInputEventAdapterServiceDS {
 
-    private static final Log log = LogFactory.getLog(RabbitMQEventAdapterServiceDS.class);
+    private static final Log log = LogFactory.getLog(RabbitMQInputEventAdapterServiceDS.class);
 
     /**
      * initialize the agent service here service here.
      *
      * @param context
      */
+    @Activate
     protected void activate(ComponentContext context) {
 
         try {
-            InputEventAdapterFactory rabbitmqEventEventAdapterFactory = new RabbitMQEventAdapterFactory();
+            InputEventAdapterFactory rabbitmqEventEventAdapterFactory = new RabbitMQInputEventAdapterFactory();
             context.getBundleContext().registerService(InputEventAdapterFactory.class.getName(), rabbitmqEventEventAdapterFactory, null);
             if (log.isDebugEnabled()) {
                 log.debug("Successfully deployed the input RabbitMQ adapter service");
