@@ -212,13 +212,4 @@
             </releases>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>nexus-hhivaas</id>
-            <name>HHI VAAS</name>
-            <url>http://repo-hivaas.hhi.co.kr/content/repositories/thirdparty/</url>
-        </repository>
-    </distributionManagement>
-    
 </project>
